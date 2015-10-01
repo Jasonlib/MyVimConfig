@@ -1,0 +1,679 @@
+" ***************Vimrc files for GVim ************* 
+" * CreateDate : Apr 20,2010 
+" * LastModified : Apr 20,2010 
+  
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""" 
+"                                全局设定                                    " 
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""" 
+" 不要使用vi的键盘模式，而是vim自己的 
+set nocompatible 
+  
+" 加载配置。 
+behave mswin 
+  
+"设置快速编辑.vimrc文件 ,e 编辑.vimrc 
+map <silent> <leader>e :call SwitchToBuf("~/_vimrc")<cr> 
+  
+"保存.vimrc文件后会自动调用新的.vimrc 
+autocmd! bufwritepost .vimrc source ~/_vimrc 
+  
+" 设定解码 
+if has("multi_byte") 
+    " When 'fileencodings' starts with 'ucs-bom', don't do this manually 
+    "set bomb 
+    set fileencodings=ucs-bom,utf-8,chinese,taiwan,japan,korea,latin1 
+    " CJK environment detection and corresponding setting 
+    if v:lang =~ "^zh_CN" 
+        " Simplified Chinese, on Unix euc-cn, on MS-Windows cp936 
+        set encoding=utf-8 
+        set termencoding=utf-8 
+        if &fileencoding == '' 
+            set fileencoding=utf-8 
+        endif 
+    elseif v:lang =~ "^zh_TW" 
+        " Traditional Chinese, on Unix euc-tw, on MS-Windows cp950 
+        set encoding=euc-tw 
+        set termencoding=euc-tw 
+        if &fileencoding == '' 
+            set fileencoding=euc-tw 
+        endif 
+    elseif v:lang =~ "^ja_JP" 
+        " Japanese, on Unix euc-jp, on MS-Windows cp932 
+        set encoding=euc-jp 
+        set termencoding=euc-jp 
+        if &fileencoding == '' 
+            set fileencoding=euc-jp 
+        endif 
+    elseif v:lang =~ "^ko" 
+        " Korean on Unix euc-kr, on MS-Windows cp949 
+        set encoding=euc-kr 
+        set termencoding=euc-kr 
+        if &fileencoding == '' 
+            set fileencoding=ecu-kr 
+        endif 
+    endif 
+    " Detect UTF-8 locale, and override CJK setting if needed 
+    if v:lang =~ "utf8$" || v:lang =~ "UTF-8$" 
+        set encoding=utf-8 
+    endif 
+else 
+    echoerr 'Sorry, this version of (g)Vim was not compiled with "multi_byte"' 
+endif 
+  
+  
+" browsedir设置 
+set browsedir=buffer 
+  
+" 自动格式化设置 
+filetype indent on 
+set autoindent 
+set smartindent 
+  
+" 设置备份及备份目录。 
+set backspace=indent,eol,start 
+set backupdir=F:\vim_back_files 
+set autochdir 
+  
+" history文件中需要记录的行数，恢复必须用到。 
+set history=1024 
+  
+" 窗口最大化 
+" autocmd GUIEnter * simalt ~x 
+  
+" 解决菜单乱码，先指定语言。 
+set langmenu=zh_CN.UTF-8 
+source $VIMRUNTIME/vimrc_example.vim 
+source $VIMRUNTIME/mswin.vim 
+language message zh_CN.UTF-8 
+set fileencodings=utf-8,GB2312,cp936,gb18030,big5,euc-jp,euc-kr,latin1 
+  
+" 在处理未保存或只读文件的时候，弹出确认 
+set confirm 
+  
+" 共享外部剪贴板 
+set clipboard+=unnamed 
+  
+" 显示未完成命令 
+set showcmd 
+" 侦测文件类型 
+filetype on 
+  
+" 载入文件类型插件 
+filetype plugin on 
+  
+" 为特定文件类型载入相关缩进文件 
+filetype indent on 
+  
+" 保存全局变量 
+set viminfo+=! 
+  
+" 带有如下符号的单词不要被换行分割 
+set iskeyword+=_,$,@,%,#,- 
+  
+" 语法高亮 
+syntax on 
+  
+" 设置不兼容模式 
+set nocp 
+  
+" 设置鼠标支持 
+set mouse=a 
+  
+" 不要生成swap文件 
+setlocal noswapfile 
+  
+" 当buffer被丢弃时隐藏 
+set bufhidden=hide 
+  
+" 保存窗口大小 
+"set sessionoptions+=resize 
+if has("gui_running")
+  function! ScreenFilename()
+    if has('amiga')
+      return "s:.vimsize"
+    elseif has('win32')
+      return $HOME.'\_vimsize'
+    else
+      return $HOME.'/.vimsize'
+    endif
+  endfunction
+  
+  function! ScreenRestore()
+    " Restore window size (columns and lines) and position
+    " from values stored in vimsize file.
+    " Must set font first so columns and lines are based on font size.
+    let f = ScreenFilename()
+    if has("gui_running") && g:screen_size_restore_pos && filereadable(f)
+      let vim_instance = (g:screen_size_by_vim_instance==1?(v:servername):'GVIM')
+      for line in readfile(f)
+        let sizepos = split(line)
+        if len(sizepos) == 5 && sizepos[0] == vim_instance
+          silent! execute "set columns=".sizepos[1]." lines=".sizepos[2]
+          silent! execute "winpos ".sizepos[3]." ".sizepos[4]
+          return
+        endif
+      endfor
+    endif
+  endfunction
+  function! ScreenSave()
+    " Save window size and position.
+    if has("gui_running") && g:screen_size_restore_pos
+      let vim_instance = (g:screen_size_by_vim_instance==1?(v:servername):'GVIM')
+      let data = vim_instance . ' ' . &columns . ' ' . &lines . ' ' .
+            \ (getwinposx()<0?0:getwinposx()) . ' ' .
+            \ (getwinposy()<0?0:getwinposy())
+      let f = ScreenFilename()
+      if filereadable(f)
+        let lines = readfile(f)
+        call filter(lines, "v:val !~ '^" . vim_instance . "\\>'")
+        call add(lines, data)
+      else
+        let lines = [data]
+      endif
+      call writefile(lines, f)
+    endif
+  endfunction
+  if !exists('g:screen_size_restore_pos')
+    let g:screen_size_restore_pos = 1
+  endif
+  if !exists('g:screen_size_by_vim_instance')
+    let g:screen_size_by_vim_instance = 1
+  endif
+  autocmd VimEnter * if g:screen_size_restore_pos == 1 | call ScreenRestore() | endif
+  autocmd VimLeavePre * if g:screen_size_restore_pos == 1 | call ScreenSave() | endif
+endif
+" C++头文件识别 
+" au BufEnter /usr/include/c++/* setf cpp 
+" au BufEnter /usr/include/g++-3/* setf cpp 
+  
+" GNU标准 
+" au BufEnter /usr/* call GnuIndent() 
+  
+" 显示行号 
+set number 
+"hi LineNr guifg=LightBlue  
+  
+" tab宽度 
+set tabstop=4 
+set cindent shiftwidth=4 
+set autoindent shiftwidth=4 
+  
+" C/C++注释 
+set comments=:// 
+  
+" 修正自动C式样注释功能 <2005/07/16> 
+set comments=s1:/*,mb:*,ex0:/ 
+  
+" 增强检索功能 
+set tags=./tags,./../tags,./**/tags 
+  
+" 保存文件格式 
+set fileformats=unix,dos 
+  
+" 文件被其他程序修改时自动载入 
+set autoread 
+  
+" 高亮字符，让其不受100列限制 
+:highlight OverLength ctermbg=red ctermfg=white guibg=red guifg=white 
+:match OverLength '\%101v.*' 
+  
+" 总是显示状态行 
+set laststatus=2 
+  
+" 状态行颜色 
+" highlight StatusLine guifg=SlateBlue guibg=Yellow 
+highlight StatusLine guifg=SlateBlue guibg=White 
+highlight StatusLineNC guifg=Gray guibg=White 
+  
+" 我的状态行显示的内容（包括文件类型和解码） 
+set statusline=[%n]%<%f%y%h%m%r%=[%b\ 0x%B]\ %l\ of\ %L,%c%V\ Page\ %N\ %P 
+  
+" 设置命令行高度为2行 
+set cmdheight=1 
+  
+" 命令行补全 
+set wildmenu 
+" 自动补全括号，包括大括号 
+:inoremap ( ()<ESC>i 
+:inoremap ) <c-r>=ClosePair(')')<CR> 
+:inoremap { {}<ESC>i 
+:inoremap } <c-r>=ClosePair('}')<CR> 
+:inoremap [ []<ESC>i 
+:inoremap ] <c-r>=ClosePair(']')<CR> 
+"去除该补全，否则在输入逻辑判断语句时会不方便     Libin. 2013/11/04
+":inoremap < <><ESC>i 
+":inoremap > <c-r>=ClosePair('>')<CR> 
+  
+  
+" 打开文件时，总是跳到退出之前的光标处 
+autocmd BufReadPost * 
+\ if line("'\"") > 0 && line("'\"") <= line("$") | 
+\   exe "normal! g`\"" | 
+\ endif 
+  
+" 用浅色高亮当前行 
+if has("gui_running") 
+    autocmd InsertLeave * se nocul 
+    autocmd InsertEnter * se cul 
+endif 
+  
+filetype plugin on      "允许使用ftplugin目录下的文件类型特定脚本 
+filetype indent on      "允许使用indent目录下的文件类型缩进 
+  
+" 设置自动粘贴功能。 
+set pastetoggle=<F3> 
+  
+" 设置以缩进的方式自动折叠和设置快捷方式 
+set foldmethod=indent 
+  
+" map <F3> zO " 打开折叠 
+map <F4> zc " 关闭折叠 
+map <F5> zR    " 打开所有折叠 
+map <F6> zM    " 关闭所有折叠 
+  
+" 保存代码文件前自动修改最后修改时间 
+au BufWritePre *.sh           call TimeStamp('#') 
+au BufWritePre .vimrc,*.vim   call TimeStamp('"') 
+au BufWritePre *.c,*.h        call TimeStamp('//') 
+au BufWritePre *.cpp,*.hpp    call TimeStamp('//') 
+au BufWritePre *.cxx,*.hxx    call TimeStamp('//') 
+au BufWritePre *.java         call TimeStamp('//') 
+au BufWritePre *.rb           call TimeStamp('#') 
+au BufWritePre *.py           call TimeStamp('#') 
+au BufWritePre Makefile       call TimeStamp('#') 
+au BufWritePre *.php 
+    \call TimeStamp('<?php //', '?>') 
+au BufWritePre *.html,*htm 
+    \call TimeStamp('<!--', '-->') 
+  
+" 更改Leader为"," 
+let g:C_MapLeader = ',' 
+  
+" 设置显示字体 
+if has("win32") 
+    "set guifont=Courier_New:h11:cANSI 
+    "set guifont=YaHei\ Mono:h11 
+    "set guifontwide=Microsoft\ Yahei\ Monotype:h11 
+    "set guifont=YaHei\ Consolas\ Hybrid:h12 
+    set guifont=Consolas:h10:b:cANSI 
+endif 
+  
+ab xmain int main(int argc, char *argv[])<cr>{<cr>}<up><cr>return 
+  
+" 使用 murphy 调色板 
+"colo murphy
+"colo cool
+"colo darkblue2
+"colo dersert
+"colo evening
+"colo motus
+colo cool
+  
+" 不要闪烁 
+set novisualbell 
+  
+" 能够漂亮地显示.NFO文件 
+set encoding=utf-8 
+function! SetFileEncodings(encodings) 
+    let b:myfileencodingsbak=&fileencodings 
+    let &fileencodings=a:encodings 
+endfunction 
+function! RestoreFileEncodings() 
+    let &fileencodings=b:myfileencodingsbak 
+    unlet b:myfileencodingsbak 
+endfunction 
+  
+au BufReadPre *.nfo call SetFileEncodings('cp437')|set ambiwidth=single 
+au BufReadPost *.nfo call RestoreFileEncodings() 
+  
+" 用空格键来开关折叠 
+set foldenable 
+set foldmethod=manual 
+nnoremap <space> @=((foldclosed(line('.')) < 0) ? 'zc' : 'zo')<CR> 
+  
+" 隐藏掉菜单和工具条。
+" My Added => 隐藏右侧滚动条：【  \set guioptions-=r <Bar> 】
+ set guioptions-=m 
+ set guioptions-=T
+ set guioptions-=r
+ map <silent> <F2> :if &guioptions =~# 'T' <Bar> 
+        \set guioptions-=T <Bar> 
+        \set guioptions-=r <Bar> 
+        \set guioptions-=m <bar> 
+    \else <Bar> 
+        \set guioptions+=T <Bar>        
+        \set guioptions+=r <Bar> 
+        \set guioptions+=m <Bar> 
+    \endif<CR> 
+  
+" 标签页设置 
+if has("gui_running") 
+    set showtabline=2 
+    map! tn tabnew 
+    nmap <C-c> :tabclose<CR> 
+endif 
+  
+" 标签页只显示文件名 
+function ShortTabLabel () 
+    let bufnrlist = tabpagebuflist (v:lnum) 
+    let label = bufname (bufnrlist[tabpagewinnr (v:lnum) -1]) 
+    let filename = fnamemodify (label, ':t') 
+    return filename 
+endfunction 
+  
+set guitablabel=%{ShortTabLabel()} 
+  
+" 使回格键（backspace）正常处理indent, eol, start等 
+set backspace=eol,start,indent 
+  
+" 允许backspace和光标键跨越行边界 
+" set whichwrap+=<,>,h,l 
+  
+" 可以在buffer的任何地方使用鼠标（类似office中在工作区双击鼠标定位） 
+set mouse=a 
+set selection=exclusive 
+set selectmode=mouse,key 
+  
+" 启动的时候不显示那个援助索马里儿童的提示 
+set shortmess=atI 
+  
+" 通过使用: commands命令，告诉我们文件的哪一行被改变过 
+set report=0 
+  
+" 不让vim发出讨厌的滴滴声 
+set noerrorbells 
+  
+" 在被分割的窗口间显示空白，便于阅读 
+set fillchars=vert:\ ,stl:\ ,stlnc:\ 
+  
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""" 
+"                              搜索和匹配                                      " 
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""" 
+" 高亮显示匹配的括号 
+set showmatch 
+  
+" 匹配括号高亮的时间（单位是十分之一秒） 
+set matchtime=3 
+  
+" 在搜索的时候忽略大小写 
+set ignorecase 
+  
+" 不要高亮被搜索的句子（phrases） 
+" set nohlsearch 
+  
+" 在搜索时，输入的词句的逐字符高亮（类似firefox的搜索） 
+set incsearch 
+  
+" 输入:set list命令是应该显示些啥？ 
+set listchars=tab:\|\ ,trail:.,extends:>,precedes:<,eol:$ 
+" Tab补全时忽略这些忽略这些 
+set wildignore=*.o,*.obj,*.bak,*.exe 
+" 光标移动到buffer的顶部和底部时保持3行距离 
+"set scrolloff=3 
+  
+"搜索出之后高亮关键词 
+set hlsearch 
+  
+nmap <silent> <leader><cr> :noh<cr> 
+  
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""" 
+"                              CTags的设定                                     " 
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""" 
+set tags=tags; 
+" 按照名称排序 
+let Tlist_Sort_Type = "name" 
+  
+" 在右侧显示窗口 
+let Tlist_Use_Right_Window = 1 
+  
+" 压缩方式 
+let Tlist_Compart_Format = 1 
+  
+" 如果只有一个buffer，kill窗口也kill掉buffer 
+let Tlist_Exist_OnlyWindow = 1 
+  
+" 不要关闭其他文件的tags 
+let Tlist_File_Fold_Auto_Close = 0 
+  
+" 不要显示折叠树 
+let Tlist_Enable_Fold_Column = 0 
+  
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""" 
+"                               快捷键映射                                     " 
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""" 
+"设置其他快捷键 
+map <F7> :vsplit<ENTER>:edit `pwd`<ENTER>i 
+"F7 打开左侧垂直窗口选择待编辑的文件 
+  
+" 自动完成的缩进。 
+if has("autocmd") 
+    if has("gui") 
+        autocmd WinLeave * set nocursorline nocursorcolumn 
+        autocmd WinEnter * set cursorline cursorcolumn 
+    else 
+        autocmd WinLeave * set nocursorline nocursorcolumn 
+        autocmd WinEnter * set cursorline nocursorcolumn 
+    endif 
+  
+    " Enable file type detection. 
+  
+    " load view saved by the mkview command 
+    autocmd FileType * loadview 
+    autocmd FileType * set noexpandtab 
+"   autocmd BufWinEnter * loadview 
+  
+    " Use the default filetype settings, so that mail gets 'tw' set to 72, 
+    " 'cindent' is on in C files, etc. 
+    " Also load indent files, to automatically do language-dependent indenting. 
+    filetype plugin indent on 
+  
+    " In text files, always limit the width of text to 78 characters 
+    autocmd FileType text set textwidth=78 expandtab softtabstop=4 
+    autocmd FileType sh set shiftwidth=4 expandtab softtabstop=4 
+    autocmd FileType php set shiftwidth=4 expandtab softtabstop=4 
+    autocmd FileType html set shiftwidth=4 expandtab softtabstop=4 
+    autocmd FileType javascript set shiftwidth=4 expandtab softtabstop=4 
+    autocmd FileType python set shiftwidth=4 expandtab softtabstop=4 
+    autocmd FileType ruby set shiftwidth=4 expandtab softtabstop=4 
+    autocmd FileType eruby set shiftwidth=4 expandtab softtabstop=4 
+    autocmd FileType sql set shiftwidth=4 expandtab softtabstop=4 
+  
+    " When editing a file, always jump to the last known cursor position. 
+    " Don't do it when the position is invalid or when inside an event handler 
+    " (happens when dropping a file on gvim). 
+    autocmd BufReadPost * 
+          \ if line("'\"") > 0 && line("'\"") <= line("$") | 
+          \   execute "normal g`\"" | 
+          \ endif 
+  
+    augroup prog 
+        " Remove all cprog autocommands 
+        autocmd! 
+  
+        " When starting to edit a file: 
+        "   For C and C++ files set formatting of comments and set C-indenting on. 
+        "   For other files switch it off. 
+        "   Don't change the order, it's important that the line with * comes first. 
+        autocmd FileType *      set formatoptions=tcoql nocindent comments& 
+  
+        autocmd BufWinLeave *.sh,*.c,*.cpp,*.perl,*.py mkview 
+        autocmd BufWinEnter *.sh,*.c,*.cpp,*.perl,*.py silent loadview 
+  
+        function! CleverTab() 
+            if strpart( getline('.'), 0, col('.')-1 ) =~ '^\s*$' 
+            return "\<Tab>" 
+        else 
+            return "\<C-N>" 
+        endfunction 
+  
+        autocmd FileType c,cpp  noremap! <S-Tab> <C-R>=CleverTab()<CR> 
+        autocmd FileType c,cpp  noremap! <C-]> <C-X><C-]> 
+        autocmd FileType c,cpp  noremap! <C-F> <C-X><C-F> 
+        autocmd FileType c,cpp  noremap! <C-D> <C-X><C-D> 
+        autocmd FileType c,cpp  noremap! <C-L> <C-X><C-L> 
+  
+        autocmd FileType c,cpp,sh,perl,python set fileformat=unix 
+        autocmd FileType sh     set formatoptions=croql cindent comments=b:# 
+        autocmd FileType c,cpp  set expandtab shiftwidth=4 softtabstop=4 
+    augroup END 
+endif " has("autocmd") 
+  
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""" 
+"                            PYTHON 相关的设置                                 " 
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""" 
+"Python 文件的一般设置，比如不要 tab 等 
+"设置自动缩进为4,插入模式里: 插入 <Tab> 时使用合适数量的空格。 
+"要插入实际的制表，可用 CTRL-V<Tab>  
+autocmd FileType python setlocal expandtab | setlocal shiftwidth=4 | 
+    \setlocal softtabstop=4 | setlocal textwidth=76 | 
+    \tabstop=4 
+  
+"pydiction插件设置(需要安装pydiction插件) 
+  
+"设置python的字典路径 
+let g:pydiction_location = '~/.vim/skeleton/pydict/complete-dict' 
+  
+"设置pydict的菜单高度 
+let g:pydiction_menu_height = 10   
+  
+"Python Unittest 的一些设置 
+"在编写 Python 代码及 unittest 测试时不需要离开 vim 
+"键入 :make 或者点击 gvim 工具条上的 make 按钮就自动执行测试用例 
+autocmd FileType python compiler pyunit 
+autocmd FileType python setlocal makeprg=python\ ~/.vim/skeleton/alltests.py 
+autocmd BufNewFile,BufRead test*.py setlocal makeprg=python\ % 
+  
+"自动使用新文件模板(需要提前准备skeleton相关文件) 
+autocmd BufNewFile test*.py 0r ~/.vim/skeleton/test.py 
+autocmd BufNewFile alltests.py 0r ~/.vim/skeleton/alltests.py 
+autocmd BufNewFile wx*.py 0r ~/.vim/skeleton/wxskeleton.py 
+autocmd BufNewFile *.py 0r ~/.vim/skeleton/skeleton.py 
+  
+"设置= + - * 前后自动空格 
+"设置,后面自动添加空格 
+au FileType python inoremap <buffer>= <c-r>=EqualSign('=')<CR> 
+au FileType python inoremap <buffer>+ <c-r>=EqualSign('+')<CR> 
+au FileType python inoremap <buffer>- <c-r>=EqualSign('-')<CR> 
+au FileType python inoremap <buffer>* <c-r>=EqualSign('*')<CR> 
+au FileType python inoremap <buffer>/ <c-r>=EqualSign('/')<CR> 
+au FileType python inoremap <buffer>> <c-r>=EqualSign('>')<CR> 
+au FileType python inoremap <buffer>< <c-r>=EqualSign('<')<CR> 
+au FileType python inoremap <buffer>: <c-r>=Swap()<CR> 
+au FileType python inoremap <buffer>, ,<space> 
+  
+  
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""" 
+"                        脚本内部用到的自定义函数                              " 
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""" 
+" 
+"函数后面加上！是防止vimrc文件重新载入时报错 
+"实现光标位置自动交换:) -->  ): 
+function! Swap() 
+    if getline('.')[col('.') - 1] =~ ")" 
+        return "\<ESC>la:" 
+    else 
+        return ":" 
+    endif 
+endf 
+  
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""" 
+" 
+"实现+-*/前后自动添加空格，逗号后面自动添加空格，适用python 
+"支持+= -+ *= /+格式 
+  
+function! EqualSign(char) 
+    if a:char  =~ '='  && getline('.') =~ ".*(" 
+        return a:char 
+    endif 
+    let ex1 = getline('.')[col('.') - 3] 
+    let ex2 = getline('.')[col('.') - 2] 
+  
+    if ex1 =~ "[-=+><>\/\*]" 
+        if ex2 !~ "\s" 
+            return "\<ESC>i".a:char."\<SPACE>" 
+        else 
+            return "\<ESC>xa".a:char."\<SPACE>" 
+        endif 
+    else 
+        if ex2 !~ "\s" 
+            return "\<SPACE>".a:char."\<SPACE>\<ESC>a" 
+        else 
+            return a:char."\<SPACE>\<ESC>a" 
+        endif 
+    endif 
+endf 
+  
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""" 
+" 
+"实现括号的自动配对后防止重复输入），适用python 
+function! ClosePair(char) 
+    if getline('.')[col('.') - 1] == a:char 
+        return "\<Right>" 
+    else 
+        return a:char 
+    endif 
+endf 
+  
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""" 
+" 
+"SwitchToBuf()实现它在所有标签页的窗口中查找指定的文件名，如果找到这样一个窗口， 
+"就跳到此窗口中；否则，它新建一个标签页来打开vimrc文件 
+"上面自动编辑.vimrc文件用到的函数 
+function! SwitchToBuf(filename) 
+    let bufwinnr = bufwinnr(a:filename) 
+    if bufwinnr != -1 
+    exec bufwinnr . "wincmd w" 
+        return 
+    else 
+        " find in each tab 
+        tabfirst 
+        let tab = 1 
+        while tab <= tabpagenr("$") 
+            let bufwinnr = bufwinnr(a:filename) 
+            if bufwinnr != -1 
+                exec "normal " . tab . "gt" 
+                exec bufwinnr . "wincmd w" 
+                return 
+            endif 
+            tabnext 
+            let tab = tab + 1 
+        endwhile 
+        " not exist, new tab 
+        exec "tabnew " . a:filename 
+    endif 
+endfunction 
+  
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""" 
+" 
+"Last change用到的函数，返回时间，能够自动调整位置 
+function! TimeStamp(...) 
+    let sbegin = '' 
+    let send = '' 
+    if a:0 >= 1 
+        let sbegin = a:1.'\s*' 
+    endif 
+    if a:0 >= 2 
+        let send = ' '.a:2 
+    endif 
+    let pattern =  'Last Change: .\+' 
+        \. send 
+    let pattern = '^\s*' . sbegin . pattern . '\s*$' 
+    let now = strftime('%Y-%m-%d %H:%M:%S', 
+        \localtime()) 
+    let row = search(pattern, 'n') 
+    if row  == 0 
+        let now = a:1 .  ' Last Change:  ' 
+            \. now . send 
+        call append(2, now) 
+    else 
+        let curstr = getline(row) 
+        let col = match( curstr , 'Last') 
+        let spacestr = repeat(' ',col - 1) 
+        let now = a:1 . spacestr . 'Last Change:  ' 
+            \. now . send 
+        call setline(row, now) 
+    endif 
+endfunction 
+
+
+"==================================================================================================================
