@@ -91,6 +91,7 @@ nnoremap [b :bp<CR>
 nnoremap ]b :bn<CR>
 let g:airline_theme = 'badwolf'   "强制设置主题颜色(主题文件名见：~\vim-airline\autoload\airline\themes)，否则插件会自动根据主窗口主题自动匹配设置相应的主题 . Libin. 2015/10/1 研究
 
+
 " Powerline设置参数，已被Airline取代，不安装配置该插件
  "powerline{
 	"set guifont=PowerlineSymbols\ for\ Powerline
