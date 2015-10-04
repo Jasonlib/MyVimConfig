@@ -104,7 +104,90 @@ let g:airline_theme = 'badwolf'   "强制设置主题颜色(主题文件名见：~\vim-airline\
     "let g:Powerline_symbols="fancy"
  "}
 "======================================================================================================================================================
+" 国外专家的Vim显示增强配置(Find by Youtube) _20151004
+"======================================================================================================================================================
+"====[ Make the 81st column stand out ]====================
+    " EITHER the entire 81st column, full-screen...
+"    highlight ColorColumn ctermbg=magenta
+"    set colorcolumn=81
 
+    " OR ELSE just the 81st column of wide lines...
+    highlight ColorColumn ctermbg=magenta
+    call matchadd('ColorColumn', '\%81v', 100)
+
+    " OR ELSE on April Fools day...
+"    highlight ColorColumn ctermbg=red ctermfg=blue
+"    exec 'set colorcolumn=' . join(range(2,80,3), ',')
+
+"=====[ Highlight matches when jumping to next ]=============
+
+    " This rewires n and N to do the highlighing...
+    nnoremap <silent> n   n:call HLNext(0.4)<cr>
+    nnoremap <silent> N   N:call HLNext(0.4)<cr>
+
+"    " EITHER blink the line containing the match...
+"    function! HLNext (blinktime)
+"        set invcursorline
+"        redraw
+"        exec 'sleep ' . float2nr(a:blinktime * 1000) . 'm'
+"        set invcursorline
+"        redraw
+"    endfunction
+	
+
+    " OR ELSE ring the match in red...
+"    function! HLNext (blinktime)
+"        highlight RedOnRed ctermfg=red guibg=red
+"        let [bufnum, lnum, col, off] = getpos('.')
+"        let matchlen = strlen(matchstr(strpart(getline('.'),col-1),@/))
+"        echo matchlen
+"        let ring_pat = (lnum > 1 ? '\%'.(lnum-1).'l\%>'.max([col-4,1]) .'v\%<'.(col+matchlen+3).'v.\|' : '')
+"                \ . '\%'.lnum.'l\%>'.max([col-4,1]) .'v\%<'.col.'v.'
+"                \ . '\|'
+"                \ . '\%'.lnum.'l\%>'.max([col+matchlen-1,1]) .'v\%<'.(col+matchlen+3).'v.'
+"                \ . '\|'
+"                \ . '\%'.(lnum+1).'l\%>'.max([col-4,1]) .'v\%<'.(col+matchlen+3).'v.'
+"        let ring = matchadd('RedOnRed', ring_pat, 101)
+"        redraw
+"        exec 'sleep ' . float2nr(a:blinktime * 1000) . 'm'
+"        call matchdelete(ring)
+"        redraw
+"    endfunction
+
+    " OR ELSE briefly hide everything except the match...
+"    function! HLNext (blinktime)
+"        highlight BlackOnBlack ctermfg=black guibg=black
+"        let [bufnum, lnum, col, off] = getpos('.')
+"        let matchlen = strlen(matchstr(strpart(getline('.'),col-1),@/))
+"        let hide_pat = '\%<'.lnum.'l.'
+"                \ . '\|'
+"                \ . '\%'.lnum.'l\%<'.col.'v.'
+"                \ . '\|'
+"                \ . '\%'.lnum.'l\%>'.(col+matchlen-1).'v.'
+"                \ . '\|'
+"                \ . '\%>'.lnum.'l.'
+"        let ring = matchadd('BlackOnBlack', hide_pat, 101)
+"        redraw
+"        exec 'sleep ' . float2nr(a:blinktime * 1000) . 'm'
+"        call matchdelete(ring)
+"        redraw
+"    endfunction
+"
+    " OR ELSE just highlight the match in red...
+    function! HLNext (blinktime)
+        let [bufnum, lnum, col, off] = getpos('.')
+        let matchlen = strlen(matchstr(strpart(getline('.'),col-1),@/))
+        let target_pat = '\c\%#'.@/
+		highlight WhiteOnRed ctermbg=green guibg=red
+        let ring = matchadd('WhiteOnRed', target_pat, 101)
+        redraw
+        exec 'sleep ' . float2nr(a:blinktime * 1000) . 'm'
+        call matchdelete(ring)
+        redraw
+    endfunction
+
+
+"======================================================================================================================================================
     set diffexpr=MyDiff()  
     function MyDiff()  
       let opt = '-a --binary '  
