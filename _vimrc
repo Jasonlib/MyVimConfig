@@ -342,21 +342,21 @@ let g:airline_theme = 'badwolf'   "强制设置主题颜色(主题文件名见：~\vim-airline\
         endif  
     endfunction  
       
-    "对NERD_commenter的设置  
-    "let NERDShutUp=1  
-      
-    " 使用F8打开  
-    "nnoremap <silent> <F8> :TlistToggle<CR>  
-      
-    "设置文件浏览器窗口显示方式  
-    "通过WinManager插件来将TagList窗口和netrw窗口整合起来  
-    let g:winManagerWindowLayout='FileExplorer|TagList'  
-    nmap wm :WMToggle<cr>  
-      
-    "设置PythonDict用Tab自动补全功能  
-    filetype plugin on   
-    let g:pydiction_location = 'C:\Program Files\Vim\vim73\tools\pydiction\complete-dict'  
-    let g:pydiction_menu_height = 20  
+"    "对NERD_commenter的设置  
+"    "let NERDShutUp=1  
+"      
+"    " 使用F8打开  
+"    "nnoremap <silent> <F8> :TlistToggle<CR>  
+"      
+"    "设置文件浏览器窗口显示方式  
+"    "通过WinManager插件来将TagList窗口和netrw窗口整合起来  
+"    let g:winManagerWindowLayout='FileExplorer|TagList'  
+"    nmap wm :WMToggle<cr>  
+"      
+"    "设置PythonDict用Tab自动补全功能  
+"    filetype plugin on   
+"    let g:pydiction_location = 'C:\Program Files\Vim\vim73\tools\pydiction\complete-dict'  
+"    let g:pydiction_menu_height = 20  
 
 " 保存窗口大小 
 "set sessionoptions+=resize 
