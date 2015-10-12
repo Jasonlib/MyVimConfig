@@ -22,8 +22,11 @@
 	set noexpandtab 
 " 可视模式下，对于选中的文本，可以通过点命令来执行之前缓存的命令
 	vnoremap . :norm.<CR>
+" 将Vim默认剪贴板设为系统剪贴板,是的系统剪贴板与Vim剪贴板互通互用
+if has("win32") 
+	set clipboard=unnamed
+endif
 
- 
  " 设置显示字体 
 if has("win32") 
     "set guifont=Courier_New:h11:cANSI 
@@ -198,7 +201,7 @@ else
 	set undodir=$VIMFILES/\_undodir
 endif
 
-set undolevels=5000 "maximum number of changes that can be undone
+set undolevels=5000						"maximum number of changes that can be undone
 
 "======================================================================================================================================================
     set diffexpr=MyDiff()  
