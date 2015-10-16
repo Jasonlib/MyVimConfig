@@ -84,7 +84,7 @@ let g:airline_powerline_fonts = 1
 " 开启tabline
 let g:airline#extensions#tabline#enabled = 1
 " tabline中当前buffer两端的分隔字符
-let g:airline#extensions#tabline#left_sep = ' '
+let g:airline#extensions#tabline#left_sep = ' '  "\u2b80
 " tabline中未激活buffer两端的分隔字符
 let g:airline#extensions#tabline#left_alt_sep = '|'
 " tabline中buffer显示编号
@@ -202,6 +202,14 @@ else
 endif
 
 set undolevels=5000						"maximum number of changes that can be undone
+
+"======================================================================================================================================================
+"高亮当前列 cuc
+set cursorcolumn
+"高亮当前行 cul
+"set cursorline 
+"设置光标颜色为绿色
+hi Cursor guibg=green					
 
 "======================================================================================================================================================
     set diffexpr=MyDiff()  
