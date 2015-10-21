@@ -79,9 +79,9 @@ set laststatus=2       " 必须设置该项，否则状态栏无法显示
 "set guifont=DejaVu\ Sans\ Mono\ for\ Powerline:h10        "这种字体配置写法在Windows OS上很别扭，用下面的写法效果一样，但更容易理解~
 "set guifont=Consolas\ for\ Powerline\ FixedD:h10:b:cANSI
 set guifont=Consolas_for_Powerline_FixedD:h10:b:cANSI  "配置使用网友修改过的已加入箭头符号的字体，使用该字体，需要同时修改~vim\vimfiles\bundle\vim-airline\autoload\airline\init.vim中对应的符号Unicode码值（在word中插入符号中可看到具体数值）
-"set guifont=DejaVu_Sans_Mono_for_Powerline:h10:cANSI  "使用该字体需呀从git上下载安装
+"set guifont=DejaVu_Sans_Mono_for_Powerline:h10:cANSI  "使用该字体需从git上下载安装
 "set guifont=DejaVu_Sans_Mono_for_Powerline:h10.5:b:cANSI
-"set guifont=DejaVu_Sans_Mono_for_Powerline:h11:cANSI  "使用该字体需呀从git上下载安装
+"set guifont=DejaVu_Sans_Mono_for_Powerline:h11:cANSI  "使用该字体需从git上下载安装
 let g:airline_powerline_fonts = 1
 " 开启tabline
 let g:airline#extensions#tabline#enabled = 1
