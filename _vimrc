@@ -52,6 +52,9 @@ call vundle#begin('$VIM/vimfiles/bundle/')
 Plugin 'VundleVim/Vundle.vim'
 Plugin 'L9'
 Plugin 'bling/vim-airline'
+" vim-fugitive: invoke most by :Gdiff
+" ---------------------------------------------------
+Plugin 'tpope/vim-fugitive'      " 用于Airline显示Git分枝状态=> https://github.com/bling/vim-airline/wiki/FAQ
 
 " All of your Plugins must be added before the following line
 call vundle#end()			" required
@@ -205,6 +208,8 @@ endif
 
 set undolevels=5000						"maximum number of changes that can be undone
 
+"======================================================================================================================================================
+" 外观显示主题配置
 "======================================================================================================================================================
 "高亮当前列 cuc
 set cursorcolumn
