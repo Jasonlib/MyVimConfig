@@ -218,6 +218,29 @@ set cursorcolumn
 "设置光标颜色为绿色
 hi Cursor guibg=green					
 
+
+"======================================================================================================================================================
+" 网友配置参考
+"======================================================================================================================================================
+"编程快捷设置，参考链接：https://github.com/wsdjeg/DotFiles/blob/master/vimrc
+" 映射Ctrl+上下左右来切换窗口
+"nnoremap <C-Right> <C-W><Right>
+"nnoremap <C-Left> <C-W><Left>
+"nnoremap <C-Up> <C-W><Up>
+"nnoremap <C-Down> <C-W><Down>
+""Ctrl+Shift+上下移动当前行
+"nnoremap <C-S-Down> :m .+1<CR>==
+"nnoremap <C-S-Up> :m .-2<CR>==
+"inoremap <C-S-Down> <Esc>:m .+1<CR>==gi
+"inoremap <C-S-Up> <Esc>:m .-2<CR>==gi
+""上下移动选中的行
+"vnoremap <C-S-Down> :m '>+1<CR>gv=gv
+"vnoremap <C-S-Up> :m '<-2<CR>gv=gv
+"inoremap ( ()<Esc>i
+"inoremap [ []<Esc>i
+"inoremap { {}<Esc>i
+
+
 "======================================================================================================================================================
     set diffexpr=MyDiff()  
     function MyDiff()  
@@ -381,7 +404,7 @@ hi Cursor guibg=green
 "    " 使用F8打开  
 "    "nnoremap <silent> <F8> :TlistToggle<CR>  
 "      
-"    "设置文件浏览器窗口显示方式  
+"    "设置文件浏览器窗口显示方式
 "    "通过WinManager插件来将TagList窗口和netrw窗口整合起来  
 "    let g:winManagerWindowLayout='FileExplorer|TagList'  
 "    nmap wm :WMToggle<cr>  
