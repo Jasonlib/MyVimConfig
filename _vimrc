@@ -81,7 +81,11 @@ set laststatus=2       " 必须设置该项，否则状态栏无法显示
 " 使用powerline打过补丁的字体
 "set guifont=DejaVu\ Sans\ Mono\ for\ Powerline:h10        "这种字体配置写法在Windows OS上很别扭，用下面的写法效果一样，但更容易理解~
 "set guifont=Consolas\ for\ Powerline\ FixedD:h10:b:cANSI
-set guifont=Consolas_for_Powerline_FixedD:h10:b:cANSI  "配置使用网友修改过的已加入箭头符号的字体，使用该字体，需要同时修改~vim\vimfiles\bundle\vim-airline\autoload\airline\init.vim中对应的符号Unicode码值（在word中插入符号中可看到具体数值）
+if (has("win32") || has("win64"))
+	set guifont=Consolas_for_Powerline_FixedD:h10:b:cANSI  "配置使用网友修改过的已加入箭头符号的字体，使用该字体，需要同时修改~vim\vimfiles\bundle\vim-airline\autoload\airline\init.vim中对应的符号Unicode码值（在word中插入符号中可看到具体数值）
+else
+	set guifont=Consolas\ for\ Powerline\ FixedD:h10:b:cANSI  "配置使用网友修改过的已加入箭头符号的字体，使用该字体，需要同时修改~vim\vimfiles\bundle\vim-airline\autoload\airline\init.vim中对应的符号Unicode码值（在word中插入符号中可看到具体数值）
+endif
 "set guifont=DejaVu_Sans_Mono_for_Powerline:h10:cANSI  "使用该字体需从git上下载安装
 "set guifont=DejaVu_Sans_Mono_for_Powerline:h10.5:b:cANSI
 "set guifont=DejaVu_Sans_Mono_for_Powerline:h11:cANSI  "使用该字体需从git上下载安装
@@ -211,208 +215,16 @@ set undolevels=5000						"maximum number of changes that can be undone
 "======================================================================================================================================================
 " 外观显示主题配置
 "======================================================================================================================================================
+"定制GUI界面  
+"set go= "无菜单、工具栏"  
+set go-=T
+set go-=m
 "高亮当前列 cuc
 set cursorcolumn
 "高亮当前行 cul
 "set cursorline 
 "设置光标颜色为绿色
 hi Cursor guibg=green					
-
-
-"======================================================================================================================================================
-" 网友配置参考
-"======================================================================================================================================================
-"编程快捷设置，参考链接：https://github.com/wsdjeg/DotFiles/blob/master/vimrc
-" 映射Ctrl+上下左右来切换窗口
-"nnoremap <C-Right> <C-W><Right>
-"nnoremap <C-Left> <C-W><Left>
-"nnoremap <C-Up> <C-W><Up>
-"nnoremap <C-Down> <C-W><Down>
-""Ctrl+Shift+上下移动当前行
-"nnoremap <C-S-Down> :m .+1<CR>==
-"nnoremap <C-S-Up> :m .-2<CR>==
-"inoremap <C-S-Down> <Esc>:m .+1<CR>==gi
-"inoremap <C-S-Up> <Esc>:m .-2<CR>==gi
-""上下移动选中的行
-"vnoremap <C-S-Down> :m '>+1<CR>gv=gv
-"vnoremap <C-S-Up> :m '<-2<CR>gv=gv
-"inoremap ( ()<Esc>i
-"inoremap [ []<Esc>i
-"inoremap { {}<Esc>i
-
-
-"======================================================================================================================================================
-    set diffexpr=MyDiff()  
-    function MyDiff()  
-      let opt = '-a --binary '  
-      if &diffopt =~ 'icase' | let opt = opt . '-i ' | endif  
-      if &diffopt =~ 'iwhite' | let opt = opt . '-b ' | endif  
-      let arg1 = v:fname_in  
-      if arg1 =~ ' ' | let arg1 = '"' . arg1 . '"' | endif  
-      let arg2 = v:fname_new  
-      if arg2 =~ ' ' | let arg2 = '"' . arg2 . '"' | endif  
-      let arg3 = v:fname_out  
-      if arg3 =~ ' ' | let arg3 = '"' . arg3 . '"' | endif  
-      let eq = ''  
-      if $VIMRUNTIME =~ ' '  
-        if &sh =~ '\<cmd'  
-          let cmd = '""' . $VIMRUNTIME . '\diff"'  
-          let eq = '"'  
-        else  
-          let cmd = substitute($VIMRUNTIME, ' ', '" ', '') . '\diff"'  
-        endif  
-      else  
-        let cmd = $VIMRUNTIME . '\diff'  
-      endif  
-      silent execute '!' . cmd . ' ' . opt . arg1 . ' ' . arg2 . ' > ' . arg3 . eq  
-    endfunction  
-      
-    "  
-    if(has("win32") || has("win95") || has("win64") || has("win16")) "判定当前操作系统类型  
-        let g:iswindows=1  
-    else  
-        let g:iswindows=0  
-    endif  
-    autocmd BufEnter * lcd %:p:h  
-      
-    if has("autocmd")  
-        filetype plugin indent on "根据文件进行缩进  
-        augroup vimrcEx  
-            au!  
-            autocmd FileType text setlocal textwidth=78  
-            autocmd BufReadPost *  
-                        \ if line("'\"") > 1 && line("'\"") <= line("$") |  
-                        \ exe "normal! g`\"" |  
-                        \ endif  
-        augroup END  
-    else  
-        set autoindent " always set autoindenting on   
-    endif " has("autocmd")  
-    set tabstop=4 "让一个tab等于4个空格  
-    set vb t_vb=  
-    set nowrap "不自动换行  
-    set hlsearch "高亮显示结果  
-    set incsearch "在输入要搜索的文字时，vim会实时匹配  
-    set backspace=indent,eol,start whichwrap+=<,>,[,] "允许退格键的def使用  
-    if(g:iswindows==1) "允许鼠标的使用  
-        "防止linux终端下无法拷贝  
-        if has('mouse')  
-            set mouse=a  
-        endif  
-        au GUIEnter * simalt ~x  
-    endif  
-      
-    "定制GUI界面  
-    "set go= "无菜单、工具栏"  
-	set go-=T
-	set go-=m
-      
-    "配置Python的编译&运行(F5运行脚本，F6编译脚本  
-    autocmd BufRead *.py set makeprg=python\ -c\ \"import\ py_compile,sys;\ sys.stderr=sys.stdout;\ py_compile.compile(r'%')\"  
-    autocmd BufRead *.py set efm=%C\ %.%#,%A\ \ File\ \"%f\"\\,\ line\ %l%.%#,%Z%[%^\ ]%\\@=%m  
-    autocmd BufRead *.py nmap <F5> :!python %<CR>  
-    autocmd BufRead *.py nmap <F6> :make<CR>  
-    autocmd BufRead *.py copen "如果是py文件，则同时打开编译信息窗口  
-      
-    "NERDTree,提供查看文件折叠/展开列表功能  
-    nmap <F2> :NERDTreeToggle<CR>  
-    "imap <F2> <ESC> :NERDTreeToggle<CR>  
-      
-    "进行Tlist的设置  
-    "filetype on  
-    let Tlist_Show_Menu = 1  
-    "TlistUpdate可以更新tags  
-    map <F3> :silent! Tlist<CR>  "按下F3就可以呼出Taglist  
-    let Tlist_Ctags_Cmd='ctags' "因为我们放在环境变量里，所以可以直接执行  
-    let Tlist_Use_Right_Window=0 "让窗口显示在右边，0的话就是显示在左边  
-    let Tlist_Show_One_File=1 "让taglist可以同时展示多个文件的函数列表，如果想只有1个，设置为1  
-    let Tlist_File_Fold_Auto_Close=1 "非当前文件，函数列表折叠隐藏  
-    let Tlist_Exit_OnlyWindow=1 "当taglist是最后一个分割窗口时，自动退出vim  
-    let Tlist_Process_File_Always=0 "是否一直处理tags.1:处理;0:不处理  
-    let Tlist_Inc_Winwidth=0  
-    "set tags=C:\Program Files\Vim\vim73\Tags "设置tags文件路径  
-      
-      
-    map <F12> :call Do_CsTag()<CR>  
-    nmap <C-@>s :cs find s <C-R>=expand("<cword>")<CR><CR>:copen<CR>  
-    nmap <C-@>g :cs find g <C-R>=expand("<cword>")<CR><CR>  
-    nmap <C-@>c :cs find c <C-R>=expand("<cword>")<CR><CR>:copen<CR>  
-    nmap <C-@>t :cs find t <C-R>=expand("<cword>")<CR><CR>:copen<CR>  
-    nmap <C-@>e :cs find e <C-R>=expand("<cword>")<CR><CR>:copen<CR>  
-    nmap <C-@>f :cs find f <C-R>=expand("<cfile>")<CR><CR>:copen<CR>  
-    nmap <C-@>i :cs find i ^<C-R>=expand("<cfile>")<CR>$<CR>:copen<CR>  
-    nmap <C-@>d :cs find d <C-R>=expand("<cword>")<CR><CR>:copen<CR>  
-    function Do_CsTag()  
-        let dir = getcwd()  
-        if filereadable("tags")  
-            if(g:iswindows==1)  
-                let tagsdeleted=delete(dir."\\"."tags")  
-            else  
-                let tagsdeleted=delete("./"."tags")  
-            endif  
-            if(tagsdeleted!=0)  
-                echohl WarningMsg | echo "Fail to do tags! I cannot delete the tags" | echohl None  
-                return  
-            endif  
-        endif  
-        if has("cscope")  
-            silent! execute "cs kill -1"  
-        endif  
-        if filereadable("cscope.files")  
-            if(g:iswindows==1)  
-                let csfilesdeleted=delete(dir."\\"."cscope.files")  
-            else  
-                let csfilesdeleted=delete("./"."cscope.files")  
-            endif  
-            if(csfilesdeleted!=0)  
-                echohl WarningMsg | echo "Fail to do cscope! I cannot delete the cscope.files" | echohl None  
-                return  
-            endif  
-        endif  
-        if filereadable("cscope.out")  
-            if(g:iswindows==1)  
-                let csoutdeleted=delete(dir."\\"."cscope.out")  
-            else  
-                let csoutdeleted=delete("./"."cscope.out")  
-            endif  
-            if(csoutdeleted!=0)  
-                echohl WarningMsg | echo "Fail to do cscope! I cannot delete the cscope.out" | echohl None  
-                return  
-            endif  
-        endif  
-        if(executable('ctags'))  
-            "silent! execute "!ctags -R --c-types=+p --fields=+S *"  
-            silent! execute "!ctags -R --c++-kinds=+p --fields=+iaS --extra=+q ."  
-        endif  
-        if(executable('cscope') && has("cscope") )  
-            if(g:iswindows!=1)  
-                silent! execute "!find . -name '*.h' -o -name '*.c' -o -name '*.cpp' -o -name '*.java' -o -name '*.cs' > cscope.files"  
-            else  
-                silent! execute "!dir /s/b *.c,*.cpp,*.h,*.java,*.cs >> cscope.files"  
-            endif  
-            silent! execute "!cscope -b"  
-            execute "normal :"  
-            if filereadable("cscope.out")  
-                execute "cs add cscope.out"  
-            endif  
-        endif  
-    endfunction  
-      
-"    "对NERD_commenter的设置  
-"    "let NERDShutUp=1  
-"      
-"    " 使用F8打开  
-"    "nnoremap <silent> <F8> :TlistToggle<CR>  
-"      
-"    "设置文件浏览器窗口显示方式
-"    "通过WinManager插件来将TagList窗口和netrw窗口整合起来  
-"    let g:winManagerWindowLayout='FileExplorer|TagList'  
-"    nmap wm :WMToggle<cr>  
-"      
-"    "设置PythonDict用Tab自动补全功能  
-"    filetype plugin on   
-"    let g:pydiction_location = 'C:\Program Files\Vim\vim73\tools\pydiction\complete-dict'  
-"    let g:pydiction_menu_height = 20  
 
 " 保存窗口大小 
 "set sessionoptions+=resize 
@@ -471,4 +283,25 @@ if has("gui_running")
   autocmd VimEnter * if g:screen_size_restore_pos == 1 | call ScreenRestore() | endif
   autocmd VimLeavePre * if g:screen_size_restore_pos == 1 | call ScreenSave() | endif
 endif
-	
+
+"======================================================================================================================================================
+" 网友配置参考
+"======================================================================================================================================================
+"编程快捷设置，参考链接：https://github.com/wsdjeg/DotFiles/blob/master/vimrc
+" 映射Ctrl+上下左右来切换窗口
+"nnoremap <C-Right> <C-W><Right>
+"nnoremap <C-Left> <C-W><Left>
+"nnoremap <C-Up> <C-W><Up>
+"nnoremap <C-Down> <C-W><Down>
+""Ctrl+Shift+上下移动当前行
+"nnoremap <C-S-Down> :m .+1<CR>==
+"nnoremap <C-S-Up> :m .-2<CR>==
+"inoremap <C-S-Down> <Esc>:m .+1<CR>==gi
+"inoremap <C-S-Up> <Esc>:m .-2<CR>==gi
+""上下移动选中的行
+"vnoremap <C-S-Down> :m '>+1<CR>gv=gv
+"vnoremap <C-S-Up> :m '<-2<CR>gv=gv
+"inoremap ( ()<Esc>i
+"inoremap [ []<Esc>i
+"inoremap { {}<Esc>i
+
