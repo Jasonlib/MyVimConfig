@@ -1,64 +1,138 @@
-    set nocompatible  
-    set number  
-	set nobackup  "关闭自动备份功能
-	set noswapfile "关闭swp文件
-    syntax enable  
-    syntax on "打开高亮  
-    "colorscheme desert  
-    set nocompatible "不要vim模仿vi模式  
-"   set foldmethod=indent "设置折叠  
-    source $VIMRUNTIME/vimrc_example.vim  
-    source $VIMRUNTIME/mswin.vim  
-    behave mswin
-" 用jk键映射ESc键，快速推出编辑模式！
-	inoremap jk <ESC>
-" 用mm键映射o<ESC>键，快速键入mm，插入空行而不进入编辑模式！
-	nnoremap mm o<ESC>
+"======================================================================================================================================================
+" 行为、按键映射、外观显示主题配置
+"======================================================================================================================================================
+set nocompatible  
+set number  
+set nobackup					"关闭自动备份功能
+set noswapfile					"关闭swp文件
+syntax enable  
+syntax on						"打开高亮  
+"colorscheme desert  
+set nocompatible				"不要vim模仿vi模式  
+"set foldmethod=indent "设置折叠  
+source $VIMRUNTIME/vimrc_example.vim  
+source $VIMRUNTIME/mswin.vim  
+behave mswin
+inoremap jk <ESC>				"用jk键映射ESc键，快速退出编辑模式！
+nnoremap mm o<ESC>				"用mm键映射o<ESC>键，快速键入mm，插入空行而不进入编辑模式！
 "	nnoremap % :!start "E:\ProDesign\Source Insight 3\Insight3.exe" -i +=expand(line("."))
-" 设置缩进参照  2015/09/29
-	set tabstop=4 
-	set softtabstop=4 
-	set shiftwidth=4 
-	set noexpandtab 
-" 可视模式下，对于选中的文本，可以通过点命令来执行之前缓存的命令
-	vnoremap . :norm.<CR>
-" 将Vim默认剪贴板设为系统剪贴板,是的系统剪贴板与Vim剪贴板互通互用
+
+set tabstop=4					"设置缩进参照  2015/09/29
+set softtabstop=4 
+set shiftwidth=4 
+set noexpandtab 
+
+set encoding=utf-8				"必须设置该项，否则Airline无法正常显示,但与此同时需要设置如下配置，否则会出现乱码
+set fileencodings=utf-8,gbk,gb18030,gk2312
+"解决菜单乱码
+source $VIMRUNTIME/delmenu.vim
+source $VIMRUNTIME/menu.vim
+"解决consle输出乱码
+language messages zh_CN.utf-8
+vnoremap . :norm.<CR>			"可视模式下，对于选中的文本，可以通过点命令来执行之前缓存的命令
+
 if has("win32") 
-	set clipboard=unnamed
+	set clipboard=unnamed		"将Vim默认剪贴板设为系统剪贴板,使得系统剪贴板与Vim剪贴板互通互用
 endif
 
- " 设置显示字体 
-if has("win32") 
-    "set guifont=Courier_New:h11:cANSI 
-    "set guifont=YaHei\ Mono:h11 
-    "set guifontwide=Microsoft\ Yahei\ Monotype:h11 
-    "set guifont=YaHei\ Consolas\ Hybrid:h12 
-    set guifont=Consolas:h10:b:cANSI 
-endif 
-" 设置颜色主题
-	colo solarized   "monokai  cool     
-    
-"======================================================================================================================================================
-"================2015/10/01研究配置===================
-"--------------------------------------------------
-" 设置插件管理器Vunldle:
-filetype off
+"定制GUI界面  
+"set go= "无菜单、工具栏"  
+set go-=T
+set go-=m
 
+"高亮当前列 cuc
+set cursorcolumn
+"高亮当前行 cul
+"set cursorline 
+"
+"设置光标颜色为绿色
+hi Cursor guibg=green					
+" 设置显示字体 =>
+" 在下面的Airline插件中设置字体（因为需要用到增加特殊图形字符的补丁字体）
+"......
+"
+" 设置颜色主题
+"colo solarized   "monokai  cool     
+set background=dark "light
+colorscheme solarized
+
+" 保存窗口大小、位置 
+"set sessionoptions+=resize 
+if has("gui_running")
+  function! ScreenFilename()
+    if has('amiga')
+      return "s:.vimsize"
+    elseif has('win32')
+      return $HOME.'\_vimsize'
+    else
+      return $HOME.'/.vimsize'
+    endif
+  endfunction
+  
+  function! ScreenRestore()
+    " Restore window size (columns and lines) and position
+    " from values stored in vimsize file.
+    " Must set font first so columns and lines are based on font size.
+    let f = ScreenFilename()
+    if has("gui_running") && g:screen_size_restore_pos && filereadable(f)
+      let vim_instance = (g:screen_size_by_vim_instance==1?(v:servername):'GVIM')
+      for line in readfile(f)
+        let sizepos = split(line)
+        if len(sizepos) == 5 && sizepos[0] == vim_instance
+          silent! execute "set columns=".sizepos[1]." lines=".sizepos[2]
+          silent! execute "winpos ".sizepos[3]." ".sizepos[4]
+          return
+        endif
+      endfor
+    endif
+  endfunction
+  function! ScreenSave()
+    " Save window size and position.
+    if has("gui_running") && g:screen_size_restore_pos
+      let vim_instance = (g:screen_size_by_vim_instance==1?(v:servername):'GVIM')
+      let data = vim_instance . ' ' . &columns . ' ' . &lines . ' ' .
+            \ (getwinposx()<0?0:getwinposx()) . ' ' .
+            \ (getwinposy()<0?0:getwinposy())
+      let f = ScreenFilename()
+      if filereadable(f)
+        let lines = readfile(f)
+        call filter(lines, "v:val !~ '^" . vim_instance . "\\>'")
+        call add(lines, data)
+      else
+        let lines = [data]
+      endif
+      call writefile(lines, f)
+    endif
+  endfunction
+  if !exists('g:screen_size_restore_pos')
+    let g:screen_size_restore_pos = 1
+  endif
+  if !exists('g:screen_size_by_vim_instance')
+    let g:screen_size_by_vim_instance = 1
+  endif
+  autocmd VimEnter * if g:screen_size_restore_pos == 1 | call ScreenRestore() | endif
+  autocmd VimLeavePre * if g:screen_size_restore_pos == 1 | call ScreenSave() | endif
+endif
+"===============================================================================================================================
+"================2015/10/01研究配置=============================================================================================
+"===============================================================================================================================
+" 插件管理器Vunldle设置:
+filetype off
 "Vundle的路径
 set rtp+=$VIM/vimfiles/bundle/Vundle.vim
+
 "插件的安装路径
 call vundle#begin('$VIM/vimfiles/bundle/')
-
-Plugin 'VundleVim/Vundle.vim'
-Plugin 'L9'
-Plugin 'bling/vim-airline'
-" vim-fugitive: invoke most by :Gdiff
-" ---------------------------------------------------
-Plugin 'tpope/vim-fugitive'      " 用于Airline显示Git分枝状态=> https://github.com/bling/vim-airline/wiki/FAQ
+  Plugin 'VundleVim/Vundle.vim'
+  Plugin 'L9'
+  Plugin 'bling/vim-airline'
+  Plugin 'tpope/vim-fugitive'					" 用于Airline显示Git分枝状态=> https://github.com/bling/vim-airline/wiki/FAQ
+  Plugin 'altercation/vim-colors-solarized'	" 经典颜色主题
 
 " All of your Plugins must be added before the following line
-call vundle#end()			" required
-filetype plugin indent on	" required
+call vundle#end()				" required
+
+filetype plugin indent on		" required
 " Brief help
 " :PluginList       - lists configured plugins
 " :PluginInstall    - installs plugins; append `!` to update or just :PluginUpdate
@@ -67,24 +141,17 @@ filetype plugin indent on	" required
 "
 " see :h vundle for more details or wiki for FAQ
 " Put your non-Plugin stuff after this line
-"--------------------------------------------------
-set encoding=utf-8		"必须设置该项，否则Airline无法正常显示,但与此同时需要设置如下配置，否则会出现乱码
-set fileencodings=utf-8,gbk,gb18030,gk2312
-"解决菜单乱码
-source $VIMRUNTIME/delmenu.vim
-source $VIMRUNTIME/menu.vim
-"解决consle输出乱码
-language messages zh_CN.utf-8
+"-----------------------------------------------------------------------------------
 
 " 状态按增强插件airline设置
-set laststatus=2       " 必须设置该项，否则状态栏无法显示
+set laststatus=2				"必须设置该项，否则状态栏无法显示
 " 使用powerline打过补丁的字体
 "set guifont=DejaVu\ Sans\ Mono\ for\ Powerline:h10        "这种字体配置写法在Windows OS上很别扭，用下面的写法效果一样，但更容易理解~
 "set guifont=Consolas\ for\ Powerline\ FixedD:h10:b:cANSI
 if (has("win32") || has("win64"))
 	set guifont=Consolas_for_Powerline_FixedD:h10:b:cANSI  "配置使用网友修改过的已加入箭头符号的字体，使用该字体，需要同时修改~vim\vimfiles\bundle\vim-airline\autoload\airline\init.vim中对应的符号Unicode码值（在word中插入符号中可看到具体数值）
 else
-	set guifont=Consolas\ for\ Powerline\ FixedD:h10:b:cANSI  "配置使用网友修改过的已加入箭头符号的字体，使用该字体，需要同时修改~vim\vimfiles\bundle\vim-airline\autoload\airline\init.vim中对应的符号Unicode码值（在word中插入符号中可看到具体数值）
+	set guifont=Consolas\ for\ Powerline\ FixedD:h10:b:cANSI  
 endif
 "set guifont=DejaVu_Sans_Mono_for_Powerline:h10:cANSI  "使用该字体需从git上下载安装
 "set guifont=DejaVu_Sans_Mono_for_Powerline:h10.5:b:cANSI
@@ -104,17 +171,8 @@ nnoremap ]b :bn<CR>
 let g:airline_theme = 'badwolf'   "强制设置主题颜色(主题文件名见：~\vim-airline\autoload\airline\themes)，否则插件会自动根据主窗口主题自动匹配设置相应的主题 . Libin. 2015/10/1 研究
 
 
-" Powerline设置参数，已被Airline取代，不安装配置该插件
- "powerline{
-	"set guifont=PowerlineSymbols\ for\ Powerline
-	"set encoding=utf-8
-"  	set nocompatible
-"	set laststatus=2
-"	set t_Co=256
-"	let g:Powerline_symbols = 'fancy'
-"	set guifont=Consolas\ for\ Powerline\ FixedD:h10
-    "let g:Powerline_symbols="fancy"
- "}
+
+
 "======================================================================================================================================================
 " 国外专家的Vim显示增强配置(Find by Youtube) _20151004
 "======================================================================================================================================================
@@ -212,77 +270,6 @@ endif
 
 set undolevels=5000						"maximum number of changes that can be undone
 
-"======================================================================================================================================================
-" 外观显示主题配置
-"======================================================================================================================================================
-"定制GUI界面  
-"set go= "无菜单、工具栏"  
-set go-=T
-set go-=m
-"高亮当前列 cuc
-set cursorcolumn
-"高亮当前行 cul
-"set cursorline 
-"设置光标颜色为绿色
-hi Cursor guibg=green					
-
-" 保存窗口大小 
-"set sessionoptions+=resize 
-if has("gui_running")
-  function! ScreenFilename()
-    if has('amiga')
-      return "s:.vimsize"
-    elseif has('win32')
-      return $HOME.'\_vimsize'
-    else
-      return $HOME.'/.vimsize'
-    endif
-  endfunction
-  
-  function! ScreenRestore()
-    " Restore window size (columns and lines) and position
-    " from values stored in vimsize file.
-    " Must set font first so columns and lines are based on font size.
-    let f = ScreenFilename()
-    if has("gui_running") && g:screen_size_restore_pos && filereadable(f)
-      let vim_instance = (g:screen_size_by_vim_instance==1?(v:servername):'GVIM')
-      for line in readfile(f)
-        let sizepos = split(line)
-        if len(sizepos) == 5 && sizepos[0] == vim_instance
-          silent! execute "set columns=".sizepos[1]." lines=".sizepos[2]
-          silent! execute "winpos ".sizepos[3]." ".sizepos[4]
-          return
-        endif
-      endfor
-    endif
-  endfunction
-  function! ScreenSave()
-    " Save window size and position.
-    if has("gui_running") && g:screen_size_restore_pos
-      let vim_instance = (g:screen_size_by_vim_instance==1?(v:servername):'GVIM')
-      let data = vim_instance . ' ' . &columns . ' ' . &lines . ' ' .
-            \ (getwinposx()<0?0:getwinposx()) . ' ' .
-            \ (getwinposy()<0?0:getwinposy())
-      let f = ScreenFilename()
-      if filereadable(f)
-        let lines = readfile(f)
-        call filter(lines, "v:val !~ '^" . vim_instance . "\\>'")
-        call add(lines, data)
-      else
-        let lines = [data]
-      endif
-      call writefile(lines, f)
-    endif
-  endfunction
-  if !exists('g:screen_size_restore_pos')
-    let g:screen_size_restore_pos = 1
-  endif
-  if !exists('g:screen_size_by_vim_instance')
-    let g:screen_size_by_vim_instance = 1
-  endif
-  autocmd VimEnter * if g:screen_size_restore_pos == 1 | call ScreenRestore() | endif
-  autocmd VimLeavePre * if g:screen_size_restore_pos == 1 | call ScreenSave() | endif
-endif
 
 "======================================================================================================================================================
 " 网友配置参考
