@@ -32,7 +32,7 @@ language messages zh_CN.utf-8
 vnoremap . :norm.<CR>			"可视模式下，对于选中的文本，可以通过点命令来执行之前缓存的命令
 
 if has("win32") 
-	set clipboard=unnamed		"将Vim默认剪贴板设为系统剪贴板,使得系统剪贴板与Vim剪贴板互通互用
+	set clipboard=unnamed		"将Vim默认剪贴板设为系统剪贴板,是的系统剪贴板与Vim剪贴板互通互用
 endif
 
 "定制GUI界面  
@@ -44,17 +44,30 @@ set go-=m
 set cursorcolumn
 "高亮当前行 cul
 "set cursorline 
-"
+
+" 设置颜色主题
+"colo solarized   "monokai  cool     
+set background=dark "light
+colorscheme solarized
+
+"let mapleader = ","
+" Allow to trigger background
+function! ToggleBG()
+	let s:tbg = &background
+	" Inversion
+	if s:tbg == "dark"
+		set background=light
+	else
+		set background=dark
+	endif
+endfunction
+noremap <leader>bg :call ToggleBG()<CR>
+
 "设置光标颜色为绿色
 hi Cursor guibg=green					
 " 设置显示字体 =>
 " 在下面的Airline插件中设置字体（因为需要用到增加特殊图形字符的补丁字体）
 "......
-"
-" 设置颜色主题
-"colo solarized   "monokai  cool     
-set background=dark "light
-colorscheme solarized
 
 " 保存窗口大小、位置 
 "set sessionoptions+=resize 
