@@ -32,11 +32,11 @@ vnoremap <C-C> "+y
 vnoremap <C-Insert> "+y
 
 " CTRL-V and SHIFT-Insert are Paste
-map <C-V>		"+gP
-map <S-Insert>		"+gP
-
-cmap <C-V>		<C-R>+
-cmap <S-Insert>		<C-R>+
+"map <C-V>		"+gP
+"map <S-Insert>		"+gP
+"
+"cmap <C-V>		<C-R>+
+"cmap <S-Insert>		<C-R>+
 
 " Pasting blockwise and linewise selections is not possible in Insert and
 " Visual mode without the +virtualedit feature.  They are pasted as if they
@@ -44,14 +44,14 @@ cmap <S-Insert>		<C-R>+
 " Uses the paste.vim autoload script.
 " Use CTRL-G u to have CTRL-Z only undo the paste.
 
-exe 'inoremap <script> <C-V> <C-G>u' . paste#paste_cmd['i']
-exe 'vnoremap <script> <C-V> ' . paste#paste_cmd['v']
+"exe 'inoremap <script> <C-V> <C-G>u' . paste#paste_cmd['i']
+"exe 'vnoremap <script> <C-V> ' . paste#paste_cmd['v']
 
-imap <S-Insert>		<C-V>
-vmap <S-Insert>		<C-V>
+"imap <S-Insert>		<C-V>
+"vmap <S-Insert>		<C-V>
 
 " Use CTRL-Q to do what CTRL-V used to do
-noremap <C-Q>		<C-V>
+"noremap <C-Q>		<C-V>
 
 " Use CTRL-S for saving, also in Insert mode
 noremap <C-S>		:update<CR>
