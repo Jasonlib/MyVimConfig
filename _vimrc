@@ -13,9 +13,26 @@ set nocompatible				"不要vim模仿vi模式
 source $VIMRUNTIME/vimrc_example.vim  
 source $VIMRUNTIME/mswin.vim  
 behave mswin
+"========================================================================================================================
+"我的按键映射定义
 inoremap jk <ESC>				"用jk键映射ESc键，快速退出编辑模式！
 nnoremap mm o<ESC>				"用mm键映射o<ESC>键，快速键入mm，插入空行而不进入编辑模式！
+nnoremap <C-j> i<CR><ESC>		"Ctrl+j在光标处断行
+"nnoremap <S-j> Jx				"Shift+j,执行J合并光标所在行和下行为一行，同时删除J命令后出现的空格
+"========================================================================================================================
+"在normal模式下，先后按下 ,s 两个键执行_vimrc，而 ,v 则是编辑_vimrc
+:nmap ,v :e $VIM/_vimrc<CR>
+"使更新 _vimrc 更容易  :nmap 是绑定一个在normal模式下的快捷
+:nmap ,s :source $VIM/_vimrc<CR>
+
 "	nnoremap % :!start "E:\ProDesign\Source Insight 3\Insight3.exe" -i +=expand(line("."))
+if has('gui_running') && has('win32')
+    map <F11> :call libcallnr("gvimfullscreen.dll", "ToggleFullScreen", 0)<CR>
+endif
+"set guioptions-=l				"隐藏左侧滚动条
+"set guioptions-=b				"隐藏底部滚动条
+set guioptions-=r				"隐藏右侧滚动条
+"set showtabline=0				"隐藏Tab栏
 
 set tabstop=4					"设置缩进参照  2015/09/29
 set softtabstop=4 
@@ -141,6 +158,15 @@ call vundle#begin('$VIM/vimfiles/bundle/')
   Plugin 'bling/vim-airline'
   Plugin 'tpope/vim-fugitive'					" 用于Airline显示Git分枝状态=> https://github.com/bling/vim-airline/wiki/FAQ
   Plugin 'altercation/vim-colors-solarized'	" 经典颜色主题
+  Plugin 'uguu-org/vim-matrix-screensaver'		"Matrix屏保插件
+  Plugin 'godlygeek/tabular'					"Markdown语法高亮显示插件
+  Plugin 'plasticboy/vim-markdown'				
+ 					
+  Plugin 'MarcWeber/vim-addon-mw-utils'			"Markdown代码补全插件
+  Plugin 'tomtom/tlib_vim'
+  Plugin 'garbas/vim-snipmate'
+  " Optional:
+  Plugin 'honza/vim-snippets'
 
 " All of your Plugins must be added before the following line
 call vundle#end()				" required
@@ -155,6 +181,12 @@ filetype plugin indent on		" required
 " see :h vundle for more details or wiki for FAQ
 " Put your non-Plugin stuff after this line
 "-----------------------------------------------------------------------------------
+"au BufRead,BufNewFile *.{md,mdown,mkd,mkdn,markdown,mdwn} set filetype=mkd
+let g:vim_markdown_frontmatter=1		"markdown对YAML语法做个配置
+let g:vim_markdown_folding_disabled=1	"禁用了vim-markdown的自动折叠
+"nnoremap <F8> :!cmd /c c:\Python27\python c:\Python27\scripts\markdown.py %:t -e chinese > %:r.html<CR> 
+nnoremap <F8> :!cmd /c python c:\Python27\scripts\markdown2.py %:t > %:r.html<CR> 
+noremap \e  :!cmd /c start ./%:r.html<CR>
 
 " 状态按增强插件airline设置
 set laststatus=2				"必须设置该项，否则状态栏无法显示
@@ -289,19 +321,25 @@ set undolevels=5000						"maximum number of changes that can be undone
 "======================================================================================================================================================
 "编程快捷设置，参考链接：https://github.com/wsdjeg/DotFiles/blob/master/vimrc
 " 映射Ctrl+上下左右来切换窗口
-"nnoremap <C-Right> <C-W><Right>
-"nnoremap <C-Left> <C-W><Left>
-"nnoremap <C-Up> <C-W><Up>
-"nnoremap <C-Down> <C-W><Down>
+nnoremap <C-Right> <C-W><Right>
+nnoremap <C-Left> <C-W><Left>
+nnoremap <C-Up> <C-W><Up>
+nnoremap <C-Down> <C-W><Down>
 ""Ctrl+Shift+上下移动当前行
-"nnoremap <C-S-Down> :m .+1<CR>==
-"nnoremap <C-S-Up> :m .-2<CR>==
-"inoremap <C-S-Down> <Esc>:m .+1<CR>==gi
-"inoremap <C-S-Up> <Esc>:m .-2<CR>==gi
+nnoremap <C-S-Down> :m .+1<CR>==
+nnoremap <C-S-Up> :m .-2<CR>==
+inoremap <C-S-Down> <Esc>:m .+1<CR>==gi
+inoremap <C-S-Up> <Esc>:m .-2<CR>==gi
 ""上下移动选中的行
-"vnoremap <C-S-Down> :m '>+1<CR>gv=gv
-"vnoremap <C-S-Up> :m '<-2<CR>gv=gv
-"inoremap ( ()<Esc>i
-"inoremap [ []<Esc>i
-"inoremap { {}<Esc>i
-
+vnoremap <C-S-Down> :m '>+1<CR>gv=gv
+vnoremap <C-S-Up> :m '<-2<CR>gv=gv
+inoremap ( ()<Esc>i
+inoremap [ []<Esc>i
+inoremap { {}<Esc>i
+"设置移动行
+"Normal 模式下<A-j> <A-k>移动当前行到下1行或上1行
+"Visual模式下<A-j> <A-k>移动当前选中的多行到下1行或上1行
+nnoremap <A-k>  mz:m-2<cr>`z==
+nnoremap <A-j>  mz:m+<cr>`z==
+xnoremap <A-k>  :m'<-2<cr>gv=gv
+xnoremap <A-j>  :m'>+<cr>gv=gv
