@@ -18,7 +18,7 @@ behave mswin
 inoremap jk <ESC>				"用jk键映射ESc键，快速退出编辑模式！
 nnoremap mm o<ESC>				"用mm键映射o<ESC>键，快速键入mm，插入空行而不进入编辑模式！
 nnoremap <C-j> i<CR><ESC>		"Ctrl+j在光标处断行
-"nnoremap <S-j> Jx				"Shift+j,执行J合并光标所在行和下行为一行，同时删除J命令后出现的空格
+nnoremap <S-j> Jx				"Shift+j,执行J合并光标所在行和下行为一行，同时删除J命令后出现的空格
 "========================================================================================================================
 "在normal模式下，先后按下 ,s 两个键执行_vimrc，而 ,v 则是编辑_vimrc
 :nmap ,v :e $VIM/_vimrc<CR>
