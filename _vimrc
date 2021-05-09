@@ -14,6 +14,7 @@ source $VIMRUNTIME/vimrc_example.vim
 source $VIMRUNTIME/mswin.vim  
 behave mswin
 "========================================================================================================================
+let g:snipMate = { 'snippet_version' : 0 }
 "我的按键映射定义
 inoremap jk <ESC>				"用jk键映射ESc键，快速退出编辑模式！
 nnoremap mm o<ESC>				"用mm键映射o<ESC>键，快速键入mm，插入空行而不进入编辑模式！
@@ -213,7 +214,7 @@ let g:airline#extensions#tabline#buffer_nr_show = 1
 " 映射切换buffer的键位
 nnoremap [b :bp<CR>
 nnoremap ]b :bn<CR>
-let g:airline_theme = 'badwolf'   "强制设置主题颜色(主题文件名见：~\vim-airline\autoload\airline\themes)，否则插件会自动根据主窗口主题自动匹配设置相应的主题 . Libin. 2015/10/1 研究
+let g:airline_theme = 'dark'   "强制设置主题颜色(主题文件名见：~\vim-airline\autoload\airline\themes)，否则插件会自动根据主窗口主题自动匹配设置相应的主题 . Libin. 2015/10/1 研究  badwolf/badcat
 
 
 
